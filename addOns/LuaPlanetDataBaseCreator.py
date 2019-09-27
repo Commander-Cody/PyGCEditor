@@ -3,19 +3,31 @@ import sys
 from math import sqrt
 
 from config import Config
-from ui.mainwindow_presenter import MainWindow, MainWindowPresenter
 from RepositoryCreator import RepositoryCreator
 
 
-# Global variables for configuration
+
+################## Global variables for configuration ##################
+
+# This defines the data sets in the Lua table and what campaign set the data comes from
+# CampaignXMLName : LuaTableName
+campaigns = {
+"Sandbox_Gateways_Underworld" : "Gateways",
+"Sandbox_Equal_Footing_Underworld" : "Equal_Footing"
+}
+# MaximumFleetMovementDistance
 autoConnectionDistance = 100
+# Planets to be ignored (only meant for pseudo planets like the galaxy core art model)
 ignore = ["Galaxy_Core_Art_Model"]
+# Indentations
 basic_indent = "  "
 def indent(n):
     return n*basic_indent
 
 
-# Main
+
+################## Main ##################
+
 def main():
     config: Config = Config()
     path = config.dataPath
@@ -24,59 +36,85 @@ def main():
     repository = repositoryCreator.constructRepository(path)
 
     outputFile = open("PlanetDatabase.lua", "w")
-    writePlanetDatabaseTable(repository.planets, repository.tradeRoutes, outputFile)
+
+    outputFile.write(createPlanetDatabaseTable(repository).toSingleStr())
+
     outputFile.close()
 
 
 
-################## Actual Functionality ##################
+################## Create the table ##################
 
-def writePlanetDatabaseTable(allPlanets, allTradeRoutes, outputFile):
+def createPlanetDatabaseTable(repository):
+    campaignTables = []
+    for campaign in repository.campaigns:
+        #print(campaign.name)
+        try:
+            campaignAlias = campaigns[campaign.name]
+        except KeyError:
+            continue
+        campaignTables.append(createCampaignSpecificTable(campaignAlias, campaign.planets, campaign.tradeRoutes))
+
+    return createLuaTable("PlanetDataBase", mergeWithCommas(campaignTables))
+
+def createCampaignSpecificTable(campaignName, allPlanets, allTradeRoutes):
     content = []
     for planet in allPlanets:
         if not planet.name in ignore:
             content.append(createPlanetData(planet, allPlanets, allTradeRoutes))
     content = mergeWithCommas(content)
 
-    output = createLuaTable("PlanetDataBase", content)
-
-    outputFile.write(output.toSingleStr())
+    return createLuaTable(campaignName, content)
 
 def mergeWithCommas(textLineObjects):
     res = TextLines()
+    if len(textLineObjects) < 1:
+        return res
+
+    # Loop through all objects but the last
     for k in range(len(textLineObjects)-1):
+        # Add a comma to the last line of each object
         textLineObjects[k].lines[-1] = textLineObjects[k].lines[-1] + ","
         res.add(textLineObjects[k])
+
+    # Last one gets added without a comma
     return res.add(textLineObjects[-1])
 
 def createPlanetData(planet, allPlanets, allTradeRoutes):
 
     planetConnectionListContent = TextLines.asStrings(getConnections(planet, allPlanets, allTradeRoutes)).addCommas()#.addIndent()
 
-    planetConnectionList = createLuaTable("\"ConnectedTo\"", planetConnectionListContent)
+    planetConnectionList = createLuaTable("ConnectedTo", planetConnectionListContent)
 
-    planetData = createLuaTable("\"" + planet.name + "\"", planetConnectionList)
-
-    return planetData
+    return createLuaTable(planet.name, planetConnectionList)
 
 # Parameters: String, TextLines
+# Returns a lua table of the form:
+'''
+name = {
+    content
+}
+'''
+# as a TextLines object
 def createLuaTable(name, content):
     return TextLines([name + " = {"]).add(content.addIndent()).append("}")
 
+
+################## Find connections ##################
 
 def getConnections(planet, planets, tradeRoutes):
     # Traderoutes
     connections = []
     for tr in tradeRoutes:
-        if tr.start == planet and tr.end not in connections:
+        if tr.start == planet and tr.end.name not in connections:
             connections.append(tr.end.name)
-        elif tr.end == planet and tr.start not in connections:
+        elif tr.end == planet and tr.start.name not in connections:
             connections.append(tr.start.name)
 
     # Auto connections
     for p1 in planets:
         if p1 != planet and not p1.name in ignore:
-            if not p1 in connections and distance(p1,planet) < autoConnectionDistance:
+            if not p1.name in connections and distance(p1,planet) < autoConnectionDistance:
                 connections.append(p1.name)
 
     return connections
@@ -85,6 +123,9 @@ def getConnections(planet, planets, tradeRoutes):
 def distance(p1,p2):
     return sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2)
 
+
+################## Class which consists of a list of strings (lines of text) ##################
+#to keep lines of text seperate and modifiable until we want to merge them into a single string
 
 # Basically a list of strings, each of which represents a line of text
 class TextLines:
