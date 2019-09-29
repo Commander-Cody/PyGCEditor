@@ -1,4 +1,5 @@
 from gameObjects.gameObjectRepository import GameObjectRepository
+from ui.planetvariantcreator import PlanetVariantCreator
 from ui.qttraderoutecreator import QtTradeRouteCreator
 from ui.qtcampaignproperties import QtCampaignProperties
 from ui.qtautoconnectionsettings import QtAutoConnectionSettings
@@ -21,3 +22,6 @@ class DialogFactory:
 
     def makePlanetFileHiderDialog(self) -> QtPlanetFileHider:
         return QtPlanetFileHider(self.__repository)
+
+    def makePlanetVariantCreationDialog(self) -> PlanetVariantCreator:
+        return PlanetVariantCreator(self.__repository)

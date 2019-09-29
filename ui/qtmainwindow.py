@@ -76,6 +76,9 @@ class QtMainWindow(MainWindow):
         self.__newTradeRouteAction: QAction = QAction("Trade Route...", self.__window)
         self.__newTradeRouteAction.triggered.connect(self.__newTradeRoute)
 
+        self.__newPlanetVariantAction: QAction = QAction("Planet Variant...", self.__window)
+        self.__newPlanetVariantAction.triggered.connect(self.__newPlanetVariant)
+
         self.__setDataFolderAction: QAction = QAction("Set Data Folder", self.__window)
         self.__setDataFolderAction.triggered.connect(self.__openFolder)
 
@@ -94,7 +97,8 @@ class QtMainWindow(MainWindow):
 
         self.__addMenu.addAction(self.__newCampaignAction)
         self.__addMenu.addAction(self.__newTradeRouteAction)
-        
+        self.__addMenu.addAction(self.__newPlanetVariantAction)
+
         self.__menuBar.addMenu(self.__fileMenu)
         self.__menuBar.addMenu(self.__addMenu)
         self.__menuBar.addMenu(self.__optionsMenu)
@@ -264,6 +268,11 @@ class QtMainWindow(MainWindow):
         '''Helper function to launch the new trade route dialog'''
         if self.__presenter is not None:
             self.__presenter.newTradeRouteCommand.execute()
+
+    def __newPlanetVariant(self) -> None:
+        '''Helper function to launch the new planet variant dialog'''
+        if self.__presenter is not None:
+            self.__presenter.newPlanetVariantCommand.execute()
 
     def __saveFile(self) -> None:    
         '''Save file dialog'''
