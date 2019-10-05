@@ -1,0 +1,2 @@
+from addOns.LuaPlanetDataBaseCreator import writePlanetDatabaseLuaTable
+

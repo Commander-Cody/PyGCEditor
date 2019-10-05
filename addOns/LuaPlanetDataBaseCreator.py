@@ -28,7 +28,7 @@ def indent(n):
 
 ################## Main ##################
 
-def main():
+def writePlanetDatabaseLuaTable():
     config: Config = Config()
     path = config.dataPath
 
@@ -170,7 +170,3 @@ class TextLines:
         for line in self.lines:
             text = text + line + "\n"
         return text
-
-
-# Run
-main()
