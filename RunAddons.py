@@ -1,2 +1,3 @@
 from addOns.LuaPlanetDataBaseCreator import writePlanetDatabaseLuaTable
+from addOns.MassPlanetMigration import migratePlanets
 
