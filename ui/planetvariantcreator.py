@@ -5,6 +5,7 @@ from gameObjects.planet import Planet
 from gameObjects.gameObjectRepository import GameObjectRepository
 from ui.qtautocomplete import AutoCompleter
 from ui.dialogs import Dialog, DialogResult
+from xmlUtil.xmlstructure import XMLStructure
 
 class PlanetVariantCreator(Dialog):
     '''Class for a "create planet variant" dialog box'''
@@ -78,12 +79,15 @@ class PlanetVariantCreator(Dialog):
 
     def __setupAutoComplete(self) -> None:
         '''Sets up autocompleter with planet names'''
-        autoCompleter = AutoCompleter(self.__repository.getPlanetNames())
-        planetCompleter = autoCompleter.completer()
+        planetCompleter = AutoCompleter(self.__repository.getPlanetNames()).completer()
         self.__inputBaseName.setCompleter(planetCompleter)
-        planetCompleter.activated.connect(self.__onCompletionSelected)
+        planetCompleter.activated.connect(self.__onPlanetCompletionSelected)
         
-    def __onCompletionSelected(self, selectedPlanetName):
+        fileCompleter = AutoCompleter(XMLStructure.planetFiles).completer()
+        self.__inputFile.setCompleter(fileCompleter)
+        #fileCompleter.activated.connect(self.__onFileCompletionSelected)
+        
+    def __onPlanetCompletionSelected(self, selectedPlanetName) -> None:
         '''Fills out coordinate and file LineEdits with data from the selected planet'''
         selectedPlanet = self.__repository.getPlanetByName(selectedPlanetName)
         #if self.__inputX.text() == "":

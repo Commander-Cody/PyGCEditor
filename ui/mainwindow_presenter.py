@@ -265,12 +265,19 @@ class MainWindowPresenter:
 
         if len(self.__newTradeRoutes) > 0:
             self.__xmlWriter.tradeRouteWriter(self.__newTradeRoutes)
+            self.__newTradeRoutes = []
 
-        if len(self.__updatedPlanetCoords) > 0 :
+        if len(self.__updatedPlanetCoords) > 0:
             xmlReader = XMLReader()
             gameObjectFile = XMLStructure.dataFolder + "/XML/GameObjectFiles.XML"
             planetRoots = xmlReader.findPlanetFilesAndRoots(gameObjectFile)
             self.__xmlWriter.planetCoordinatesWriter(XMLStructure.dataFolder + "/XML/", planetRoots, self.__updatedPlanetCoords)
+            self.__updatedPlanetCoords = []
+        
+        if len(self.__newPlanetVariants) > 0:
+            xmlFolder = XMLStructure.dataFolder + "/XML/"
+            self.__xmlWriter.planetVariantWriter(xmlFolder, self.__newPlanetVariants)
+            self.__newPlanetVariants = []
 
     def onPlanetFileBlacklistUpdated(self, updatedBlackList):
         self.__planetFileBlacklist = updatedBlackList

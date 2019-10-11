@@ -130,18 +130,22 @@ class XMLReader:
             planetsFiles = {}
 
             for file in fileList:
-                if not os.path.isfile(XMLStructure.dataFolder + "/XML/" + file):
-                    print(file + " not found. Continuing")
-                    continue
-
-                fileRoot = et.parse(XMLStructure.dataFolder + "/XML/" + file)
-                if self.hasTag(fileRoot, "Planet"):
+                fileRoot = self.parseFile(XMLStructure.dataFolder + "/XML/" + file)
+                
+                if fileRoot is not None and self.hasTag(fileRoot, "Planet"):
                     planetsFiles[file] = fileRoot
-
+            
             return planetsFiles
 
         else:
             print("Not a meta file! findPlanetsFiles")
+    
+    def parseFile(self, path):
+        if not os.path.isfile(path):
+            print(path + " not found. Continuing")
+            return None
+
+        return et.parse(path)
 
     def findMetaFileRefs(self, metaFile: str) -> list():
         '''Searches a metafile and returns a list of XML roots that are referenced in the metafile'''
@@ -151,11 +155,9 @@ class XMLReader:
             metaFileRefs = []
 
             for file in fileList:
-                if not os.path.isfile(XMLStructure.dataFolder + "/XML/" + file):
-                    print(file + " not found. Continuing")
+                fileRoot = self.parseFile(XMLStructure.dataFolder + "/XML/" + file)
+                if fileRoot is None:
                     continue
-
-                fileRoot = et.parse(XMLStructure.dataFolder + "/XML/" + file)
                 metaFileRefs.append(fileRoot.getroot())
                 
             return metaFileRefs
