@@ -95,6 +95,7 @@ class MainWindowPresenter:
         self.__tradeRoutes: List[TradeRoute] = list()
         self.__availableTradeRoutes: List[TradeRoute] = list()
         self.__newTradeRoutes: List[TradeRoute] = list()
+        self.__newPlanetVariants: List[Planet] = list()
         self.__updatedPlanetCoords: Dict[str, List[float]] = dict()
 
         self.__planetFileBlacklist: List[String] = []
@@ -113,6 +114,7 @@ class MainWindowPresenter:
 
         self.newTradeRouteCommand = None
         self.campaignPropertiesCommand = None
+        self.newPlanetVariantCommand = None
 
 
     def onDataFolderChanged(self, folder: str) -> None:
@@ -214,6 +216,16 @@ class MainWindowPresenter:
         self.__showAutoConnections = showAutoConnections
         self.__updateGalacticPlot()
 
+    def onNewPlanetVariant(self, planet: Planet):
+        '''Handles new trade routes'''
+        self.__repository.addPlanet(planet)
+        self.__newPlanetVariants.append(planet)
+
+        self.__checkedPlanets.add(planet)
+
+        self.campaigns[self.__selectedCampaignIndex].planets.add(planet)
+        self.__updateWidgets()
+
     def onPlanetPositionChanged(self, name, new_x, new_y) -> None:
         '''Updates position of a planet in the repository'''
         planet = self.__repository.getPlanetByName(name)
@@ -253,12 +265,19 @@ class MainWindowPresenter:
 
         if len(self.__newTradeRoutes) > 0:
             self.__xmlWriter.tradeRouteWriter(self.__newTradeRoutes)
+            self.__newTradeRoutes = []
 
-        if len(self.__updatedPlanetCoords) > 0 :
+        if len(self.__updatedPlanetCoords) > 0:
             xmlReader = XMLReader()
             gameObjectFile = XMLStructure.dataFolder + "/XML/GameObjectFiles.XML"
             planetRoots = xmlReader.findPlanetFilesAndRoots(gameObjectFile)
             self.__xmlWriter.planetCoordinatesWriter(XMLStructure.dataFolder + "/XML/", planetRoots, self.__updatedPlanetCoords)
+            self.__updatedPlanetCoords = []
+        
+        if len(self.__newPlanetVariants) > 0:
+            xmlFolder = XMLStructure.dataFolder + "/XML/"
+            self.__xmlWriter.planetVariantWriter(xmlFolder, self.__newPlanetVariants)
+            self.__newPlanetVariants = []
 
     def onPlanetFileBlacklistUpdated(self, updatedBlackList):
         self.__planetFileBlacklist = updatedBlackList
@@ -269,6 +288,9 @@ class MainWindowPresenter:
 
     def getPositionOfPlanetAt(self, ind: int):
         return self.__planets[ind].x, self.__planets[ind].y
+        
+    def getPlanetAt(self, ind: int) -> str:
+        return self.__planets[ind]
 
 
     def __getNames(self, inputList: list) -> List[str]:

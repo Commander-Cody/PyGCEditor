@@ -46,8 +46,6 @@ class PlanetPositionChanger(Dialog):
         self.__dialog.setWindowTitle("Adjust position of " + self.__planet_name)
         self.__dialog.setLayout(self.__layout)
 
-        self.__presenter = None
-
         self.__result = DialogResult.Cancel
 
         self.__x = None

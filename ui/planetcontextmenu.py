@@ -10,6 +10,7 @@ class PlanetContextMenu():
     def __init__(self, presenter: MainWindowPresenter):
         self.__menu: QMenu = QMenu()
         self.__changePositionAction = self.__menu.addAction("Change position")
+        self.__createVariantAction = self.__menu.addAction("Create Variant")
         self.__presenter = presenter
 
         self.__dialog = None
@@ -28,4 +29,8 @@ class PlanetContextMenu():
             if result is DialogResult.Ok:
                 x,y = self.__dialog.getNewCoordinates()
                 self.__presenter.onPlanetPositionChanged(name, x, y)
+
+        elif choice is self.__createVariantAction:
+            planet = self.__presenter.getPlanetAt(item.row())
+            self.__presenter.newPlanetVariantCommand.execute(planet)
 

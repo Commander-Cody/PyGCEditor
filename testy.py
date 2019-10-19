@@ -6,6 +6,7 @@ from commands.ShowTradeCreatorDialogCommand import ShowTradeRouteCreatorDialogCo
 from commands.ShowCampaignPropertiesDialogCommand import ShowCampaignCreatorDialogCommand
 from commands.ShowAutoConnectionSettingsCommand import AutoConnectionSettingsCommand
 from commands.ShowPlanetFileHiderCommand import ShowPlanetFileHiderCommand
+from commands.ShowPlanetVariantCreatorDialogCommand import ShowPlanetVariantCreatorDialogCommand
 from config import Config
 from ui.DialogFactory import DialogFactory
 from ui.mainwindow_presenter import MainWindow, MainWindowPresenter
@@ -33,6 +34,7 @@ qtMainWindow: QtMainWindow = QtMainWindow()
 presenter: MainWindowPresenter = MainWindowPresenter(qtMainWindow, repository, config)
 presenter.newTradeRouteCommand = ShowTradeRouteCreatorDialogCommand(presenter, dialogFactory)
 presenter.campaignPropertiesCommand = ShowCampaignCreatorDialogCommand(presenter, dialogFactory)
+presenter.newPlanetVariantCommand = ShowPlanetVariantCreatorDialogCommand(presenter, dialogFactory)
 presenter.planetContextMenu = PlanetContextMenu(presenter)
 presenter.autoConnectionSettingsCommand = AutoConnectionSettingsCommand(presenter, dialogFactory)
 presenter.showPlanetFileHiderCommand = ShowPlanetFileHiderCommand(presenter, dialogFactory)

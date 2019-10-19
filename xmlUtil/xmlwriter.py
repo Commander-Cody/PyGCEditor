@@ -52,8 +52,22 @@ class XMLWriter:
                         break
                 except(KeyError):
                     pass
-            root.write(path + file, xml_declaration = "1.0", pretty_print = True)
+            self.writer(et.ElementTree(root), path + file)
 
+    def planetVariantWriter(self, path, planetVariants):
+        '''Write newly created planet variants to file'''
+        for planet in planetVariants:
+            filePath = path + planet.containingFile
+            
+            root = XMLReader().parseFile(filePath)
+            if root is None:
+                root = et.Element("Planets")
+            
+            planetRoot = et.SubElement(root, "Planet", Name = planet.name)
+            self.subElementText(planetRoot, "Variant_Of_Existing_Type", planet.variantOf)
+            pos_text = str(planet.x) + ", " + str(planet.y) + ", 10.0"
+            self.subElementText(planetRoot, "Galactic_Position", pos_text)
+            self.writer(et.ElementTree(root), filePath)
 
     def createListEntry(self, inputList):
         '''creates a list string to insert into a file
