@@ -6,7 +6,7 @@ from ui.dialogs import Dialog, DialogResult
 from ui.qttablewidgetfactory import QtTableWidgetFactory
 
 class QtPlanetFileHider(Dialog):
-    '''Class for a "change planet position" dialog box'''
+    '''Class for a "hide planets from files" dialog box'''
     def __init__(self, presenter: MainWindowPresenter):
         self.__presenter = presenter
 
