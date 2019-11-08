@@ -167,6 +167,7 @@ class MainWindowPresenter:
     def planetDraggedOnPlot(self, planetIndexes: list, position: tuple):
         '''Move a planet if it is dragged on the plot'''
         for index in planetIndexes:
+            index = self.__planetPlotIndexToRepoIndex(index)
             self.__planets[index].x = position[0]
             self.__planets[index].y = position[1]
         self.__updateGalacticPlot()
