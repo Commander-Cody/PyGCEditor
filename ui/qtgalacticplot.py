@@ -103,7 +103,7 @@ class QtGalacticPlot(QWidget):
             new_pos = (event.xdata, event.ydata)
             if self.pick_pos[0] == new_pos[0] and self.pick_pos[1] == new_pos[1]:
                 self.planetSelectedSignal.emit(list(self.picked_planet_index))
-            else:
+            elif new_pos[0] is not None:
                 self.planetDraggedSignal.emit(list(self.picked_planet_index), new_pos)
             self.picked_planet_index = None
             self.pick_pos = None
