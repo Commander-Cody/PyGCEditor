@@ -104,6 +104,7 @@ class MainWindowPresenter:
         self.__showAutoConnections = True
 
         self.__plot.planetSelectedSignal.connect(self.planetSelectedOnPlot)
+        self.__plot.planetDraggedSignal.connect(self.planetDraggedOnPlot)
 
         self.__updateWidgets()
 
@@ -154,6 +155,13 @@ class MainWindowPresenter:
 
         self.__mainWindow.updatePlanetSelection(selectedPlanets)
         self.__mainWindow.updatePlanetComboBox(self.__getNames(self.__checkedPlanets))
+        self.__updateGalacticPlot()
+    
+    def planetDraggedOnPlot(self, planetIndexes: list, position: tuple):
+        '''Move a planet if it is dragged on the plot'''
+        for index in planetIndexes:
+            self.__planets[index].x = position[0]
+            self.__planets[index].y = position[1]
         self.__updateGalacticPlot()
     
 

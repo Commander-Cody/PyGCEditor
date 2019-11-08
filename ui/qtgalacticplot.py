@@ -9,6 +9,7 @@ class QtGalacticPlot(QWidget):
     '''Class for plotting the galaxy'''
     #signal to send to main window presenter when a planet is selected in the plot
     planetSelectedSignal = pyqtSignal(list)
+    planetDraggedSignal = pyqtSignal(list, tuple)
 
     def __init__(self, parent: QWidget = None):
         super(QtGalacticPlot, self).__init__()
@@ -18,6 +19,7 @@ class QtGalacticPlot(QWidget):
         self.__galacticPlotCanvas: FigureCanvas = FigureCanvas(Figure())
 
         self.__galacticPlotCanvas.mpl_connect('pick_event', self.__planetSelect)
+        self.__galacticPlotCanvas.mpl_connect('button_release_event', self.__buttonReleased)
         self.__galacticPlotCanvas.mpl_connect('motion_notify_event', self.__planetHover)
 
         self.__galacticPlotNavBar: NavigationToolbar = NavigationToolbar(self.__galacticPlotCanvas, self.__galacticPlotWidget)
@@ -92,8 +94,19 @@ class QtGalacticPlot(QWidget):
 
     def __planetSelect(self, event) -> None:
         '''Event handler for selecting a planet on the map'''
-        planet_index = event.ind
-        self.planetSelectedSignal.emit(list(planet_index))
+        self.picked_planet_index = event.ind
+        self.pick_pos = (event.mouseevent.xdata, event.mouseevent.ydata)
+    
+    def __buttonReleased(self, event):
+        '''Emit signal to select a planet or move it'''
+        if self.picked_planet_index is not None:
+            new_pos = (event.xdata, event.ydata)
+            if self.pick_pos[0] == new_pos[0] and self.pick_pos[1] == new_pos[1]:
+                self.planetSelectedSignal.emit(list(self.picked_planet_index))
+            else:
+                self.planetDraggedSignal.emit(list(self.picked_planet_index), new_pos)
+            self.picked_planet_index = None
+            self.pick_pos = None
 
     def __planetHover(self, event) -> None:
         '''Handler for hovering on a planet in the plot'''
