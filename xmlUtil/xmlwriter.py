@@ -52,7 +52,7 @@ class XMLWriter:
                         break
                 except(KeyError):
                     pass
-            self.writer(et.ElementTree(root), path + file)
+            self.writer(root, path + file)
 
     def planetVariantWriter(self, path, planetVariants):
         '''Write newly created planet variants to file'''
