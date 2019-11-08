@@ -168,9 +168,7 @@ class MainWindowPresenter:
         '''Move a planet if it is dragged on the plot'''
         for index in planetIndexes:
             index = self.__planetPlotIndexToRepoIndex(index)
-            self.__planets[index].x = position[0]
-            self.__planets[index].y = position[1]
-        self.__updateGalacticPlot()
+            self.__changePlanetPosition(self.__planets[index], position[0], position[1])
     
 
     def onTradeRouteChecked(self, index: int, checked: bool) -> None:
@@ -238,10 +236,7 @@ class MainWindowPresenter:
     def onPlanetPositionChanged(self, name, new_x, new_y) -> None:
         '''Updates position of a planet in the repository'''
         planet = self.__repository.getPlanetByName(name)
-        planet.x = new_x
-        planet.y = new_y
-        self.__updatedPlanetCoords[name] = [new_x, new_y]
-        self.__updateGalacticPlot()
+        self.__changePlanetPosition(planet, new_x, new_y)
 
     def allPlanetsChecked(self, checked: bool) -> None:
         '''Select all planets handler: plots all planets'''
@@ -392,6 +387,12 @@ class MainWindowPresenter:
             if not p.containingFile in self.__planetFileBlacklist:
                 self.__planetPlotIndexToRepoIndexMap.append(i)
                 self.__visiblePlanets.append(p)
+    
+    def __changePlanetPosition(self, planet, new_x, new_y):
+        planet.x = new_x
+        planet.y = new_y
+        self.__updatedPlanetCoords[planet.name] = [new_x, new_y]
+        self.__updateGalacticPlot()  
     
     @property
     def config(self):
