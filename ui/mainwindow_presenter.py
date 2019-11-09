@@ -343,9 +343,9 @@ class MainWindowPresenter:
         self.__plot.plotGalaxy(self.__checkedPlanets, self.__checkedTradeRoutes, self.__planets, autoConnectionDistance)
     
     def __changePlanetPosition(self, planet, new_x, new_y):
-        planet.x = new_x
-        planet.y = new_y
-        self.__updatedPlanetCoords[planet.name] = [new_x, new_y]
+        planet.x = np.around(new_x, 1)
+        planet.y = np.around(new_y, 1)
+        self.__updatedPlanetCoords[planet.name] = [planet.x, planet.y]
         self.__updateGalacticPlot()  
     
     @property
