@@ -31,6 +31,7 @@ class QtGalacticPlot(QWidget):
         self.__annotate.set_visible(False)
         self.__planetNames = []
         self.__planetsScatter = None
+        self.picked_planet_index = None
 
     def plotGalaxy(self, planets, tradeRoutes, allPlanets, autoPlanetConnectionDistance: int = 0) -> None:
         '''Plots all planets as alpha = 0.1, then overlays all selected planets and trade routes'''
